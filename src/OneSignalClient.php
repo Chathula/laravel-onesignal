@@ -11,12 +11,12 @@ class OneSignalClient
     const ENDPOINT_NOTIFICATIONS = "/notifications";
     const ENDPOINT_PLAYERS = "/players";
 
-    private $client;
-    private $headers;
-    private $appId;
-    private $restApiKey;
-    private $userAuthKey;
-    private $additionalParams;
+    protected $client;
+    protected $headers;
+    protected $appId;
+    protected $restApiKey;
+    protected $userAuthKey;
+    protected $additionalParams;
 
     /**
      * @var bool
@@ -218,8 +218,14 @@ class OneSignalClient
         $this->requiresAuth();
         $this->usesJSON();
 
+        if (isset($parameters['api_key'])) {
+            $this->headers['headers']['Authorization'] = 'Basic '.$parameters['api_key'];
+        }
+
         // Make sure to use app_id
-        $parameters['app_id'] = $this->appId;
+        if (!isset($parameters['app_id'])) {
+            $parameters['app_id'] = $this->appId;
+        }
 
         // Make sure to use included_segments
         if (empty($parameters['included_segments']) && empty($parameters['include_player_ids'])) {
